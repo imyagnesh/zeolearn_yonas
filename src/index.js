@@ -1,12 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { registerObserver } from "react-perf-devtool";
+import ErrorBoundary from "./components/ErrorBoundary";
 import App from "./app";
 
 function callback(measures) {
   // do something with the measures
-  console.warn(measures);
-
+  // console.warn(measures);
   //   return {
   //     component: measures.componentName, // Name of the component
   //     mount: {
@@ -84,6 +84,8 @@ var options = {
 registerObserver(options, callback);
 
 ReactDOM.render(
-  <App title="Hello" caption="Hello caption" />,
+  <ErrorBoundary>
+    <App title="Hello" caption="Hello caption" />
+  </ErrorBoundary>,
   document.getElementById("root")
 );

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import Test from "./components/test";
 export default class app extends Component {
   state = {};
 
@@ -15,23 +15,44 @@ export default class app extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    console.log("shouldComponentUpdate");
     if (
       this.props.title !== nextProps.title ||
       this.state.greet !== nextState.greet
     ) {
       return true;
     }
-    return false;
+    return true;
   }
 
+  copyText = () => {
+    console.log("copied");
+  };
+
   componentDidMount() {
-    console.log(document.getElementsByTagName("h1"));
+    this.timeout = setTimeout(() => {
+      console.log("how are you?");
+    }, 0);
+
+    document.addEventListener("copy", this.copyText);
+  }
+
+  getSnapshotBeforeUpdate = (prevProps, prevState) => {
+    return "hello how ara you?";
+  };
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    console.log(snapshot);
+    console.log("componentDidUpdate");
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("copy", this.copyText);
+    clearTimeout(this.timeout);
   }
 
   onClick = () => {
-    this.setState({
-      greet: "I am fine."
-    });
+    throw new Error("OOps! something went wrong.");
   };
 
   render() {
