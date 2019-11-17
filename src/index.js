@@ -5,7 +5,7 @@ import App from "./app";
 
 ReactDOM.render(
   <ErrorBoundary>
-    <App test="hello" />
+    <App />
   </ErrorBoundary>,
   document.getElementById("root")
 );
