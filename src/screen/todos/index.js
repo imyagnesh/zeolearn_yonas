@@ -1,4 +1,5 @@
 import React, { PureComponent } from "react";
+
 import TodoHeader from "./todoHeader";
 import TodoForm from "./todoForm";
 import TodoList from "./todoList";
@@ -13,7 +14,26 @@ export default class index extends PureComponent {
   state = {
     todos: [],
     todo: "",
-    displayType: "all"
+    displayType: "all",
+    error: "",
+    loading: false
+  };
+
+  // constructor(params) {
+
+  // }
+
+  componentDidMount = async () => {
+    try {
+      this.setState({ loading: true });
+      const res = await fetch("http://localhost:3004/todos");
+      const todos = await res.json();
+      this.setState({ todos });
+    } catch (error) {
+      this.setState({ error: error.message });
+    } finally {
+      this.setState({ loading: false });
+    }
   };
 
   changeText = event => {
@@ -22,38 +42,90 @@ export default class index extends PureComponent {
 
   submit = event => {
     event.preventDefault();
-    const { todos, todo } = this.state;
-    this.setState({
-      todos: [
-        ...todos,
-        { Id: Number(new Date().getTime()), text: todo, done: false }
-      ],
-      todo: ""
+
+    import("date-fns").then(async ({ format }) => {
+      const createdAt = format(new Date(), "MM/dd/yyyy");
+
+      const { todos, todo } = this.state;
+
+      const newTodo = {
+        text: todo,
+        done: false,
+        createdAt
+      };
+
+      try {
+        this.setState({ loading: true });
+        const res = await fetch("http://localhost:3004/todos", {
+          method: "POST",
+          body: JSON.stringify(newTodo),
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json"
+          }
+        });
+        const AddedTodo = await res.json();
+
+        this.setState({
+          todos: [...todos, AddedTodo],
+          todo: ""
+        });
+      } catch (error) {
+        this.setState({ error: error.message });
+      } finally {
+        this.setState({ loading: false });
+      }
     });
   };
 
-  deleteTodo = id => {
-    const { todos } = this.state;
+  deleteTodo = async id => {
+    try {
+      this.setState({ loading: true });
+      const { todos } = this.state;
 
-    const index = todos.findIndex(x => x.Id === id);
+      await fetch(`http://localhost:3004/todos/${id}`, {
+        method: "DELETE"
+      });
 
-    this.setState({
-      todos: [...todos.slice(0, index), ...todos.slice(index + 1)]
-    });
+      const index = todos.findIndex(x => x.id === id);
+
+      this.setState({
+        todos: [...todos.slice(0, index), ...todos.slice(index + 1)]
+      });
+    } catch (error) {
+      this.setState({ error: error.message });
+    } finally {
+      this.setState({ loading: false });
+    }
   };
 
-  editTodo = todo => {
-    const { todos } = this.state;
+  editTodo = async todo => {
+    try {
+      this.setState({ loading: true });
+      const { todos } = this.state;
 
-    const index = todos.findIndex(x => x.Id === todo.Id);
+      const updatedTodo = { ...todo, done: !todo.done };
 
-    this.setState({
-      todos: [
-        ...todos.slice(0, index),
-        { ...todo, done: !todo.done },
-        ...todos.slice(index + 1)
-      ]
-    });
+      const res = await fetch(`http://localhost:3004/todos/${todo.id}`, {
+        method: "PUT",
+        body: JSON.stringify(updatedTodo),
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      });
+      const resTodo = await res.json();
+
+      const index = todos.findIndex(x => x.id === todo.id);
+
+      this.setState({
+        todos: [...todos.slice(0, index), resTodo, ...todos.slice(index + 1)]
+      });
+    } catch (error) {
+      this.setState({ error: error.message });
+    } finally {
+      this.setState({ loading: false });
+    }
   };
 
   changeDisplayType = type => {
@@ -61,6 +133,13 @@ export default class index extends PureComponent {
   };
 
   render() {
+    const { loading, error } = this.state;
+    if (loading) {
+      return <h1>Loading...</h1>;
+    }
+    if (!!error) {
+      return <h1>{error}</h1>;
+    }
     return (
       <div
         style={{

@@ -29,7 +29,7 @@ export default memo(function todoList({
             <p style={{ textDecoration: x.done ? "line-through" : "none" }}>
               {x.text}
             </p>
-            <button onClick={() => deleteTodo(x.Id)}>Delete</button>
+            <button onClick={() => deleteTodo(x.id)}>Delete</button>
           </div>
         ))}
     </div>

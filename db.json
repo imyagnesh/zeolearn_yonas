@@ -1,0 +1,10 @@
+{
+  "todos": [
+    {
+      "id": 1,
+      "text": "get milk",
+      "done": false,
+      "createdAt": "11/30/2019"
+    }
+  ]
+}
