@@ -1,5 +1,3 @@
-import React, { memo } from "react";
+import React, { memo } from 'react';
 
-export default memo(function todoHeader() {
-  return <h1>Todo App</h1>;
-});
+export default memo(() => <h1>Todo App</h1>);

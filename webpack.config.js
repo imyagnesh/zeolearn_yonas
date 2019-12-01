@@ -1,48 +1,49 @@
-const path = require("path");
-const HtmlWebPackPlugin = require("html-webpack-plugin");
+const path = require('path');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  mode: "development",
-  entry: path.join(__dirname, "src", "index"),
+  mode: 'development',
+  entry: path.join(__dirname, 'src', 'index'),
   watch: true,
   output: {
-    path: path.join(__dirname, "dist"),
-    publicPath: "/dist/",
-    filename: "bundle.js",
-    chunkFilename: "[name].js"
+    path: path.join(__dirname, 'dist'),
+    publicPath: '/dist/',
+    filename: 'bundle.js',
+    chunkFilename: '[name].js',
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
-        include: [path.resolve(__dirname, "src")],
-        exclude: [path.resolve(__dirname, "node_modules")],
+        include: [path.resolve(__dirname, 'src')],
+        exclude: [path.resolve(__dirname, 'node_modules')],
         use: {
-          loader: "babel-loader"
-        }
+          loader: 'babel-loader',
+        },
       },
       {
         test: /\.css$/,
-        include: [path.resolve(__dirname, "src")],
-        exclude: [path.resolve(__dirname, "node_modules")],
-        use: ["style-loader", "css-loader"]
-      }
-    ]
+        include: [path.resolve(__dirname, 'src')],
+        exclude: [path.resolve(__dirname, 'node_modules')],
+        use: ['style-loader', 'css-loader'],
+      },
+    ],
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: "./public/index.html",
-      filename: "./index.html"
-    })
+      template: './public/index.html',
+      filename: './index.html',
+    }),
   ],
   resolve: {
-    extensions: [".json", ".js", ".jsx"]
+    extensions: ['.json', '.js', '.jsx'],
   },
-  devtool: "source-map",
+  devtool: 'source-map',
   devServer: {
-    contentBase: path.join(__dirname, "/dist/"),
+    historyApiFallback: true,
+    contentBase: path.join(__dirname, '/dist/'),
     inline: true,
-    host: "localhost",
-    port: 8080
-  }
+    host: 'localhost',
+    port: 8080,
+  },
 };
