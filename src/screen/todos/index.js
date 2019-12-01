@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-
+import { ThemeConsumer } from '../../context/themeContext';
 import TodoHeader from './todoHeader';
 import TodoForm from './todoForm';
 import TodoList from './todoList';
@@ -148,6 +148,8 @@ export default class index extends PureComponent {
     if (error) {
       return <h1>{error}</h1>;
     }
+
+    console.log('todos');
     return (
       <div
         style={{
@@ -156,6 +158,21 @@ export default class index extends PureComponent {
           height: 'calc(100vh - 10px)',
         }}
       >
+        <ThemeConsumer>
+          {value => (
+            <div>
+              <h1>{`Theme: ${value.theme}`}</h1>
+              <button
+                type="button"
+                onClick={() => {
+                  value.changeTheme(value.theme === 'dark' ? 'light' : 'dark');
+                }}
+              >
+                Change Theme
+              </button>
+            </div>
+          )}
+        </ThemeConsumer>
         <button type="button" onClick={() => history.push('/about')}>
           Redirect
         </button>
