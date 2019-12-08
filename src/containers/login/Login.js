@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+
 import { makeStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import { Formik, Field } from 'formik';
@@ -13,12 +16,38 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Login = () => {
+const Login = ({ saveUser }) => {
   const classes = useStyles();
 
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const username = await localStorage.getItem('@zeloearn:username');
+        const password = await localStorage.getItem('@zeloearn:password');
+        console.log(username);
+        console.log(password);
+        setData({ username: username || '', password: password || '' });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    loadData();
+  }, []);
+
   const submit = values => {
-    console.log(values);
+    if (values.rememberMe) {
+      localStorage.setItem('@zeloearn:username', values.username);
+      localStorage.setItem('@zeloearn:password', values.password);
+    } else {
+      localStorage.removeItem('@zeloearn:username');
+      localStorage.removeItem('@zeloearn:password');
+    }
+    saveUser(values);
   };
+
+  console.log(data);
 
   return (
     <div
@@ -29,7 +58,10 @@ const Login = () => {
           initialValues={{
             username: '',
             password: '',
+            rememberMe: false,
+            ...data,
           }}
+          enableReinitialize
           onSubmit={submit}
           validate={values => {
             const errors = {};
@@ -67,4 +99,15 @@ const Login = () => {
     </div>
   );
 };
-export default Login;
+
+Login.propTypes = {
+  saveUser: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = dispatch => ({
+  saveUser: user => dispatch({ type: 'SAVE_USER', payload: user }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

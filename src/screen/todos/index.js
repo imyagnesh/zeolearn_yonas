@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { ThemeConsumer } from '../../context/themeContext';
 import TodoHeader from './todoHeader';
 import TodoForm from './todoForm';
 import TodoList from './todoList';
 import TodoBottomBar from './todoBottomBar';
 
-export default class index extends PureComponent {
+class index extends PureComponent {
   // write  your todo in textbox
   // submit your todo
   // display your submited todo
@@ -140,6 +141,7 @@ export default class index extends PureComponent {
   };
 
   render() {
+    console.log(this.props);
     const { history } = this.props;
     const { loading, error, todo, todos, displayType } = this.state;
     if (loading) {
@@ -193,3 +195,12 @@ export default class index extends PureComponent {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  user: state.user,
+  products: state.products,
+});
+
+const mapDispatchToProps = () => {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(index);
